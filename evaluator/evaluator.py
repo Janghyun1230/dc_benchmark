@@ -21,6 +21,8 @@ class Evaluator:
         # return immediately if we use whole dataset to train
         if args.method == 'whole':
             return
+        """ Change) add args.factor
+        """
         data_loader = EvaluatorUtils.get_data_loader(args.method, args.factor)
         self.train_images, self.train_labels = data_loader.load_data(data_dir, args.dataset,
                                                                      args.ipc, data_file)
@@ -51,7 +53,8 @@ def prepare_args():
     parser.add_argument('--ipc', type=int, default=10, help='image(s) per class')
     parser.add_argument('--dsa', action="store_true", default=False, help='dsa')
     parser.add_argument('--aug', type=str, default='', help='augmentation method')
-
+    """ Change) add args.factor
+    """
     parser.add_argument('--factor', type=int, default=2,
                         help='factor of decoding function (IDC)')  # Newly added
     parser.add_argument(
@@ -119,6 +122,8 @@ def prepare_args():
 if __name__ == '__main__':
     args = prepare_args()
     evaluator = Evaluator()
+    """ Change) add args.factor
+    """
     data_file = EvaluatorUtils.get_data_file_name(args.method, args.dataset, args.ipc, args.factor)
     print("using data file: ", data_file)
     evaluator.load_data(DATA_DIR, data_file, args)

@@ -83,8 +83,6 @@ class EvaluatorUtils:
         lr = float(args.lr_net)
         Epoch = int(args.epoch_eval_train)
 
-        lr_schedule = [Epoch // 2 + 1]
-
         if args.optimizer == 'adam':
             logging.info("using adam optimizer")
             print("using adam optimizer")
@@ -93,10 +91,13 @@ class EvaluatorUtils:
             print("using sgd optimizer")
             logging.info("using sgd optimizer")
             optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=0.0005)
-        """Propose: Scheduler modification (multi steps)
+        # lr_schedule = [Epoch // 2 + 1]
+        """Change) Scheduler modification (multi-step is good for ipc=50)
         """
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            optimizer, milestones=[2 * Epoch // 3, 5 * Epoch // 6], gamma=0.2)
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
+                                                         milestones=[Epoch // 2],
+                                                         gamma=0.1)
+        # scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[2 * Epoch // 3, 5 * Epoch // 6], gamma=0.2)
 
         trainloader = torch.utils.data.DataLoader(dst_train,
                                                   batch_size=args.batch_train,
@@ -115,18 +116,18 @@ class EvaluatorUtils:
                                                          aug=True,
                                                          ep=ep,
                                                          logging=logging)
-            if ep in lr_schedule:
-                lr *= 0.1
-                if args.optimizer == 'adam':
-                    logging.info("using adam optimizer")
-                    # optimizer = torch.optim.Adam(net.parameters(), lr=lr)
-                else:
-                    logging.info("using sgd optimizer")
-                    optimizer = torch.optim.SGD(net.parameters(),
-                                                lr=lr,
-                                                momentum=0.9,
-                                                weight_decay=0.0005)
-            """Propose: Scheduler modification (the previous version does not maintain optimization states such as momentum)
+            # if ep in lr_schedule:
+            #     lr *= 0.1
+            #     if args.optimizer == 'adam':
+            #         logging.info("using adam optimizer")
+            #         # optimizer = torch.optim.Adam(net.parameters(), lr=lr)
+            #     else:
+            #         logging.info("using sgd optimizer")
+            #         optimizer = torch.optim.SGD(net.parameters(),
+            #                                     lr=lr,
+            #                                     momentum=0.9,
+            #                                     weight_decay=0.0005)
+            """Change) Scheduler modification (the previous version does not maintain optimization states such as momentum)
             """
             scheduler.step()
 
@@ -182,7 +183,7 @@ class EvaluatorUtils:
             net.train()
         else:
             net.eval()
-        """ Modification: IDC augmentation 
+        """ Change) IDC augmentation 
         """
         if args.aug == 'idc':
             augment = idc_aug.IdcDiffAug(strategy=args.dsa_strategy, batch=False)
@@ -200,7 +201,7 @@ class EvaluatorUtils:
                     # if i_batch == 0:
                     #     logging.info("using ", args.aug)
                     # print("using ", args.aug)
-                    """ Modification: IDC augmentation
+                    """ Change) IDC augmentation
                     """
                     if args.aug == 'idc':
                         with torch.no_grad():
@@ -214,7 +215,7 @@ class EvaluatorUtils:
                     img = EvaluatorUtils.augment(img, args.dc_aug_param, device=args.device)
             lab = datum[1].to(args.device)
             n_b = lab.shape[0]
-            """ Modification: Mixup
+            """ Change) Mixup
             """
             if args.aug == 'idc' and mode == 'train':
                 mixup_p = 0.5
@@ -664,6 +665,8 @@ class EvaluatorUtils:
 
     @staticmethod
     def get_data_loader(method, factor=2):
+        """ Change) add factor and idc
+        """
         method = method.lower()
         if method == 'dc':
             return DCDataLoader()
@@ -684,6 +687,8 @@ class EvaluatorUtils:
 
     @staticmethod
     def get_data_file_name(method, dataset, ipc, factor=2):
+        """ Change) add factor and idc
+        """
         method = method.lower()
         if method == 'dc':
             return DCDataLoader.get_data_file_name(method, dataset, ipc)
