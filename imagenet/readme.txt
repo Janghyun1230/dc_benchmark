@@ -1,9 +1,9 @@
 * Before run the code set --imagenet_dir in argument.py
 
-# To run IDC (set -f 3)
+# To test IDC (set -f 3)
 python run.py --nclass 10 --ipc 10 -f 3
 
-# To run IDC-I (set -f 1)
+# To test IDC-I (set -f 1)
 python run.py --nclass 10 --ipc 10 -f 1
 
 # Other arguments
