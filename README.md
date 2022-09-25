@@ -8,6 +8,14 @@ It covers the following:
 - How to integrate
 - Commands to reproduce all the SOTA methods
 
+# Test with IDC
+```
+python evaluator/evaluator.py --method idc --aug idc --ipc 50 --factor 2
+```
+- For IDC-I, use factor 1.
+- You can download condensed IDC data from [link](https://drive.google.com/drive/folders/1yh0Hf2ia4b-1edMiAr1kXCH4eUcYNfmz). 
+- Currently, only CIFAR-10 and CIFAR-100 are supported. (set DATA_PATH in idc_data_loader.py)
+
 # A quick Youtube demo for adding new methods
 [![IMAGE_ALT](pictures/video_demo.png)](https://www.youtube.com/watch?v=GkpUGBtvkVs&list=PLa7cY2m0LvSnN47GOG7SjHlYjMZ-t2NSJ)
 
